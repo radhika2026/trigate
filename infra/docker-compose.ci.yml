@@ -1,0 +1,17 @@
+version: "3.9"
+
+# CI profile — mock backends only, no GPU required
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: trigate
+      POSTGRES_PASSWORD: trigate
+      POSTGRES_DB: trigate
+    ports:
+      - "5432:5432"

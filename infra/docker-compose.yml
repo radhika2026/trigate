@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  gateway:
+    build: ..
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - POSTGRES_DSN=postgresql://trigate:trigate@postgres:5432/trigate
+      - TENANT_KEYS={"sk-dev":"tenant1"}
+      - BACKENDS_CONFIG=[{"id":"mock-1","type":"mock","tier":"small","model_id":"mock-small"},{"id":"mock-2","type":"mock","tier":"mid","model_id":"mock-mid"},{"id":"mock-3","type":"mock","tier":"frontier","model_id":"mock-frontier"}]
+    depends_on:
+      - redis
+      - postgres
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: trigate
+      POSTGRES_PASSWORD: trigate
+      POSTGRES_DB: trigate
+    ports:
+      - "5432:5432"
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
