@@ -55,6 +55,26 @@ class Settings(BaseSettings):
     # --- Thread pool ---
     executor_max_workers: int = 8
 
+    # --- Domain-adaptive cache thresholds ---
+    # JSON string overriding per-domain similarity thresholds, e.g.
+    # '{"factual_qa": 0.85, "code": 0.93}'
+    domain_thresholds: str = "{}"
+
+    @field_validator("domain_thresholds")
+    @classmethod
+    def validate_domain_thresholds(cls, v: str) -> str:
+        try:
+            parsed = json.loads(v)
+            if not isinstance(parsed, dict):
+                raise ValueError("domain_thresholds must be a JSON object")
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"domain_thresholds is not valid JSON: {exc}") from exc
+        return v
+
+    def get_domain_thresholds(self) -> dict[str, float]:
+        """Return domain threshold overrides (empty dict = use defaults)."""
+        return json.loads(self.domain_thresholds)  # type: ignore[no-any-return]
+
     @field_validator("tenant_keys")
     @classmethod
     def validate_tenant_keys(cls, v: str) -> str:
