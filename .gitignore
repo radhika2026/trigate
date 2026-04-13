@@ -14,3 +14,7 @@ htmlcov/
 *.pyd
 .mypy_cache/
 .ruff_cache/
+benchmarks/datasets/agentic_trace.jsonl
+benchmarks/datasets/sharegpt_1k.jsonl
+benchmarks/datasets/*.jsonl
+benchmarks/datasets/*.csv
