@@ -36,6 +36,7 @@ class Settings(BaseSettings):
 
     # --- vLLM ---
     vllm_base_url: str = "http://localhost:8001"
+    vllm_block_size: int = 16
 
     # --- OpenAI ---
     openai_api_key: str = ""
